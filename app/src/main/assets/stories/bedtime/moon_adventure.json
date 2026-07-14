@@ -1,0 +1,29 @@
+{
+  "id": "moon_adv_001",
+  "title": "The Moon's Night Light",
+  "category": "Bedtime",
+  "coverImage": "file:///android_asset/images/moon_cover.webp",
+  "ageGroup": "2-3",
+  "readingTime": "4 min",
+  "pages": [
+    {
+      "image": "file:///android_asset/images/moon_1.webp",
+      "text": "The moon looked down at the dark earth and felt a little bit lonely in the big night sky."
+    },
+    {
+      "image": "file:///android_asset/images/moon_2.webp",
+      "text": "Suddenly, a tiny firefly named Flicker flew up high, blinking his bright yellow light."
+    },
+    {
+      "image": "file:///android_asset/images/moon_3.webp",
+      "text": "'Don't worry, Moon!' buzzed Flicker. 'I'll stay here and keep you company tonight.'"
+    },
+    {
+      "image": "file:///android_asset/images/moon_4.webp",
+      "text": "Soon, hundreds of fireflies joined Flicker, dancing like stars around the smiling moon."
+    }
+  ],
+  "moral": "Friends can make the darkest night feel bright and warm.",
+  "isFeatured": true,
+  "isPremium": false
+}

@@ -1,2 +1,2 @@
-# short-story
-Short story app for kids
+# Tellora Kids
+A storytelling world for kids.

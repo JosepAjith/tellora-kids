@@ -1,0 +1,29 @@
+{
+  "id": "starry_night_001",
+  "title": "The Sleepy Little Star",
+  "category": "Bedtime",
+  "coverImage": "file:///android_asset/images/starry_cover.webp",
+  "ageGroup": "2-3",
+  "readingTime": "3 min",
+  "pages": [
+    {
+      "image": "file:///android_asset/images/starry_1.webp",
+      "text": "High up in the sky, there lived a tiny star named Sparkle."
+    },
+    {
+      "image": "file:///android_asset/images/starry_2.webp",
+      "text": "While all the other stars were bright and awake, Sparkle felt very sleepy."
+    },
+    {
+      "image": "file:///android_asset/images/starry_3.webp",
+      "text": "The moon whispered, 'It's okay to be sleepy, Sparkle. The world needs a quiet star too.'"
+    },
+    {
+      "image": "file:///android_asset/images/starry_4.webp",
+      "text": "Soon, Sparkle closed his eyes and drifted into a beautiful dream."
+    }
+  ],
+  "moral": "Everyone has their own rhythm, and it's okay to rest.",
+  "isFeatured": false,
+  "isPremium": false
+}
