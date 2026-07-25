@@ -56,20 +56,40 @@ class StoryViewModel @Inject constructor(
         observeTts()
     }
 
+    fun retry() {
+        loadStoryDetails()
+    }
+
     private fun loadStoryDetails() {
         viewModelScope.launch {
             getStoryDetailsUseCase(storyId)
+                .combine(preferencesDataSource.getStoryProgress(storyId)) { details, progress ->
+                    details to progress
+                }
                 .onStart { _uiState.update { it.copy(isLoading = true) } }
                 .catch { e -> _uiState.update { it.copy(isLoading = false, error = e.message) } }
-                .collect { details ->
+                .collect { (details, progress) ->
                     _uiState.update { 
                         it.copy(
                             isLoading = false,
                             story = details?.story,
-                            isFavorite = details?.isFavorite ?: false
+                            isFavorite = details?.isFavorite ?: false,
+                            readingProgress = if (details?.story?.pages?.isNotEmpty() == true) {
+                                (progress.toFloat() / details.story.pages.size)
+                            } else 0f
                         )
                     }
                 }
+        }
+    }
+
+    fun updateCurrentPage(page: Int) {
+        viewModelScope.launch {
+            preferencesDataSource.saveStoryProgress(storyId, page)
+            _uiState.update { state ->
+                val totalPages = state.story?.pages?.size ?: 1
+                state.copy(readingProgress = page.toFloat() / totalPages)
+            }
         }
     }
 
@@ -108,6 +128,13 @@ class StoryViewModel @Inject constructor(
     fun stopSpeak() {
         ttsHelper.stop()
         _uiState.update { it.copy(autoPlayEnabled = false) }
+    }
+
+    fun toggleAutoPlay() {
+        _uiState.update { it.copy(autoPlayEnabled = !it.autoPlayEnabled) }
+        if (!_uiState.value.autoPlayEnabled) {
+            ttsHelper.stop()
+        }
     }
 
     fun toggleFavorite() {

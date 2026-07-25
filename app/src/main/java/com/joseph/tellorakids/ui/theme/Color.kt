@@ -51,3 +51,10 @@ val FunnyVibrant = Color(0xFFBA68C8)     // Silly Purple
 val MagicGradient = listOf(Color(0xFFFF6F00), Color(0xFFF4511E))
 val FantasyGradient = listOf(Color(0xFF7E57C2), Color(0xFF5E35B1))
 val NatureGradient = listOf(Color(0xFF00BFA5), Color(0xFF00897B))
+
+// Pastel Colors for the Kid-Friendly UI
+val SoftPink = Color(0xFFFFD1DC)
+val SoftBlue = Color(0xFFAEC6CF)
+val SoftGreen = Color(0xFFB2E2D2)
+val SoftYellow = Color(0xFFFFF9C4)
+val KidsOrange = Color(0xFFFFE0B2)

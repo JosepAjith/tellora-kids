@@ -1,6 +1,6 @@
 package com.joseph.tellorakids.di
 
-import com.joseph.tellorakids.data.repository.StoryRepositoryImpl
+import com.joseph.tellorakids.data.repository.FirestoreStoryRepositoryImpl
 import com.joseph.tellorakids.domain.repository.StoryRepository
 import dagger.Binds
 import dagger.Module
@@ -15,6 +15,6 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindStoryRepository(
-        storyRepositoryImpl: StoryRepositoryImpl
+        storyRepositoryImpl: FirestoreStoryRepositoryImpl
     ): StoryRepository
 }

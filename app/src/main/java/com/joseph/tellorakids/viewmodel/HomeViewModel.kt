@@ -16,8 +16,10 @@ data class HomeUiState(
     val isLoading: Boolean = true,
     val featuredStories: List<Story> = emptyList(),
     val recentStory: Story? = null,
+    val recentStoryProgress: Int = 1,
     val categories: List<Story> = emptyList(),
     val favoriteIds: Set<String> = emptySet(),
+    val availableAgeGroups: List<String> = emptyList(),
     val selectedAgeGroup: String = "all",
     val isPremium: Boolean = false,
     val error: String? = null
@@ -37,6 +39,11 @@ class HomeViewModel @Inject constructor(
         loadHomeData()
     }
 
+    fun retry() {
+        _uiState.update { it.copy(isLoading = true, error = null) }
+        loadHomeData()
+    }
+
     private fun loadHomeData() {
         viewModelScope.launch {
             // Combine age group and premium status with home data
@@ -49,26 +56,46 @@ class HomeViewModel @Inject constructor(
                 _uiState.update { it.copy(selectedAgeGroup = ageGroup, isPremium = isPremium) }
                 combine(
                     getHomeStoriesUseCase(ageGroup),
-                    repository.getFavoriteStoryIds()
-                ) { homeStories, favorites ->
-                    Triple(homeStories, favorites, ageGroup)
+                    repository.getFavoriteStoryIds(),
+                    repository.getAllStories("all") // To extract all age groups
+                ) { homeStories, favorites, allStories ->
+                    val ageGroups = allStories.map { it.ageGroup }
+                        .filter { it.isNotBlank() }
+                        .distinct()
+                        .sorted()
+                    
+                    Quadruple(homeStories, favorites, ageGroup, ageGroups)
                 }
             }.catch { e ->
                 _uiState.update { it.copy(isLoading = false, error = e.message) }
-            }.collect { (homeStories, favorites, ageGroup) ->
+            }.collect { (homeStories, favorites, ageGroup, ageGroups) ->
+                val recentId = homeStories.recent?.id
+                val progress = if (recentId != null) {
+                    repository.getStoryProgress(recentId).first()
+                } else 1
+
                 _uiState.update { 
                     it.copy(
                         isLoading = false,
                         featuredStories = homeStories.featured,
                         recentStory = homeStories.recent,
+                        recentStoryProgress = progress,
                         categories = homeStories.categories,
                         favoriteIds = favorites,
+                        availableAgeGroups = ageGroups,
                         selectedAgeGroup = ageGroup
                     )
                 }
             }
         }
     }
+
+    private data class Quadruple<out A, out B, out C, out D>(
+        val first: A,
+        val second: B,
+        val third: C,
+        val fourth: D
+    )
 
     fun toggleFavorite(storyId: String) {
         viewModelScope.launch {

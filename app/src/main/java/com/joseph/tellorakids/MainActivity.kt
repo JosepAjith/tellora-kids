@@ -24,6 +24,12 @@ import com.joseph.tellorakids.viewmodel.SettingsViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
+import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.serialization.json.Json
+import com.joseph.tellorakids.domain.model.Story
+import kotlinx.serialization.decodeFromString
+import android.util.Log
+
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
@@ -37,6 +43,9 @@ class MainActivity : ComponentActivity() {
         
         enableEdgeToEdge()
         adsManager.initialize(this)
+
+        // TODO: Uncomment to seed database, then delete after one successful run
+        seedDatabase()
 
         setContent {
             val settingsViewModel: SettingsViewModel = hiltViewModel()
@@ -56,6 +65,76 @@ class MainActivity : ComponentActivity() {
                     )
                 }
             }
+        }
+    }
+
+    private fun seedDatabase() {
+        val firestore = FirebaseFirestore.getInstance()
+        
+        // PASTE YOUR JSON CONTENT BETWEEN THE TRIPLE QUOTES BELOW
+        val jsonString = """
+  [
+     {
+       "id": "story_0011",
+       "version": 1,
+       "title": "A Little Leaf's Journey",
+       "category": "Nature",
+       "coverImage": "",
+       "ageGroup": "3-5",
+       "readingTime": "2 min",
+       "language": "en",
+       "pages": [
+         {
+           "page": 1,
+           "image": "",
+           "text": "A little leaf danced on a tree. \"I want to see the world!\" said the leaf."
+         },
+         {
+           "page": 2,
+           "image": "",
+           "text": "The wind gently carried the leaf over a beautiful garden. \"Wow! Everything looks so wonderful!\" said the little leaf."
+         },
+         {
+           "page": 3,
+           "image": "",
+           "text": "The leaf met a colorful butterfly and a tiny bird. \"Come with us,\" they said. \"Let's explore together!\""
+         },
+         {
+           "page": 4,
+           "image": "",
+           "text": "Soon, the leaf landed near its tree in a warm, sunny spot. \"What a wonderful adventure!\" smiled the leaf."
+         }
+       ],
+       "moral": "",
+       "isFeatured": true,
+       "isPremium": false
+     }]
+        """.trimIndent()
+
+        if (jsonString == "[]") {
+            Log.w("SEEDER", "No JSON data found. Please paste your JSON into the jsonString variable.")
+            return
+        }
+
+        try {
+            val stories = Json { 
+                ignoreUnknownKeys = true 
+                coerceInputValues = true
+            }.decodeFromString<List<Story>>(jsonString)
+            
+            stories.forEach { story ->
+                firestore.collection("stories")
+                    .document(story.id)
+                    .set(story)
+                    .addOnSuccessListener { 
+                        Log.d("SEEDER", "✅ Successfully uploaded: ${story.title}") 
+                    }
+                    .addOnFailureListener { e -> 
+                        Log.e("SEEDER", "❌ Failed to upload: ${story.title}", e) 
+                    }
+            }
+        } catch (e: Exception) {
+            Log.e("SEEDER", "💥 Error parsing JSON: ${e.message}", e)
         }
     }
 }

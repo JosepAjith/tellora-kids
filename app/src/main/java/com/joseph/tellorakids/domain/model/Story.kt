@@ -1,25 +1,36 @@
 package com.joseph.tellorakids.domain.model
 
+import com.google.firebase.firestore.PropertyName
+import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.Serializable
 
+@OptIn(InternalSerializationApi::class)
 @Serializable
 data class Story(
-    val id: String,
-    val title: String,
-    val category: String,
-    val coverImage: String,
-    val ageGroup: String, // Updated to ageGroup for clarity (e.g., "2-3", "4-5", "6-8")
-    val readingTime: String,
-    val pages: List<StoryPage>,
-    val moral: String,
-    val isFeatured: Boolean = false,
-    val isPremium: Boolean = false // New: Added for premium upgrade feature
+    val id: String = "",
+    val version: Int = 1,
+    val title: String = "",
+    val category: String = "",
+    val coverImage: String = "",
+    val ageGroup: String = "",
+    val readingTime: String = "",
+    val language: String = "en",
+    val pages: List<StoryPage> = emptyList(),
+    val moral: String = "",
+    
+    @get:PropertyName("featured") @set:PropertyName("featured")
+    var isFeatured: Boolean = false,
+    
+    @get:PropertyName("premium") @set:PropertyName("premium")
+    var isPremium: Boolean = false
 )
 
+@OptIn(InternalSerializationApi::class)
 @Serializable
 data class StoryPage(
-    val image: String,
-    val text: String
+    val page: Int = 0,
+    val image: String = "",
+    val text: String = ""
 )
 
 enum class StoryCategory(val displayName: String) {
@@ -28,12 +39,13 @@ enum class StoryCategory(val displayName: String) {
     MORAL("Moral Stories"),
     FRIENDSHIP("Friendship"),
     ADVENTURE("Adventure"),
-    FUNNY("Funny")
+    FUNNY("Funny"),
+    NATURE("Nature")
 }
 
 enum class AgeGroup(val displayName: String, val filterValue: String) {
     ALL("All", "all"),
-    TWO_THREE("2–3 Years", "2-3"),
-    FOUR_FIVE("4–5 Years", "4-5"),
+    TWO_FOUR("2–4 Years", "2-4"),
+    FOUR_SIX("4–6 Years", "4-6"),
     SIX_EIGHT("6–8 Years", "6-8")
 }

@@ -40,6 +40,11 @@ class CategoryViewModel @Inject constructor(
         loadCategoryStories()
     }
 
+    fun retry() {
+        _uiState.update { it.copy(isLoading = true, error = null) }
+        loadCategoryStories()
+    }
+
     private fun loadCategoryStories() {
         viewModelScope.launch {
             repository.getSelectedAgeGroup().flatMapLatest { ageGroup ->

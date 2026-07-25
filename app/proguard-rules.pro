@@ -16,6 +16,15 @@
 # debugging stack traces.
 #-keepattributes SourceFile,LineNumberTable
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# Preserve data classes used for Firebase serialization
+-keep class com.joseph.tellorakids.domain.model.** { *; }
+
+# Firebase Firestore specific rules (often included but good to have)
+-keepattributes *Annotation*
+-keepclassmembers class * {
+  @com.google.firebase.firestore.PropertyName <fields>;
+  @com.google.firebase.firestore.PropertyName <methods>;
+}
+
+# Kotlin Serialization (if used in release)
+-keepattributes RuntimeVisibleAnnotations, AnnotationDefault

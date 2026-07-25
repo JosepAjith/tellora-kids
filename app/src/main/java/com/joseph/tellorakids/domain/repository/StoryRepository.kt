@@ -17,6 +17,8 @@ interface StoryRepository {
     // Continue Reading
     fun getRecentStoryId(): Flow<String?>
     suspend fun saveRecentStory(storyId: String)
+    fun getStoryProgress(storyId: String): Flow<Int>
+    suspend fun saveStoryProgress(storyId: String, page: Int)
 
     // Age Filter
     fun getSelectedAgeGroup(): Flow<String>

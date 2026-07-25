@@ -32,6 +32,11 @@ class FavoritesViewModel @Inject constructor(
         loadFavorites()
     }
 
+    fun retry() {
+        _uiState.update { it.copy(isLoading = true, error = null) }
+        loadFavorites()
+    }
+
     private fun loadFavorites() {
         viewModelScope.launch {
             combine(

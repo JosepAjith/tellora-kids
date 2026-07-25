@@ -13,11 +13,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.joseph.tellorakids.common.utils.AdsManager
 import com.joseph.tellorakids.domain.model.Story
 import com.joseph.tellorakids.ui.components.BannerAdView
+import com.joseph.tellorakids.ui.components.ErrorView
 import com.joseph.tellorakids.ui.components.StoryCard
 import com.joseph.tellorakids.viewmodel.CategoryViewModel
 
@@ -32,9 +34,11 @@ fun CategoryScreen(
     val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
             TopAppBar(
-                title = { Text(text = uiState.categoryName) },
+                modifier = Modifier.statusBarsPadding(),
+                title = { Text(text = uiState.categoryName, fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back")
@@ -48,7 +52,20 @@ fun CategoryScreen(
             }
         }
     ) { padding ->
-        if (uiState.stories.isEmpty() && !uiState.isLoading) {
+        if (uiState.isLoading) {
+            Box(
+                modifier = Modifier.fillMaxSize().padding(padding),
+                contentAlignment = androidx.compose.ui.Alignment.Center
+            ) {
+                CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+            }
+        } else if (uiState.error != null) {
+            ErrorView(
+                message = uiState.error,
+                onRetry = { viewModel.retry() },
+                modifier = Modifier.padding(padding)
+            )
+        } else if (uiState.stories.isEmpty()) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()

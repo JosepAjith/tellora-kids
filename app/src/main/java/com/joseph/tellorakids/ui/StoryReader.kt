@@ -15,13 +15,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-
-// Pastel Colors for the Kid-Friendly UI
-val SoftPink = Color(0xFFFFD1DC)
-val SoftBlue = Color(0xFFAEC6CF)
-val SoftGreen = Color(0xFFB2E2D2)
-val SoftYellow = Color(0xFFFFF9C4)
-val KidsOrange = Color(0xFFFFE0B2)
+import com.joseph.tellorakids.ui.theme.*
 
 @Composable
 fun StoryReader(

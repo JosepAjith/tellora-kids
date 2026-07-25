@@ -20,6 +20,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.joseph.tellorakids.domain.model.Story
 
@@ -31,58 +32,54 @@ fun StoryCard(
     onFavoriteClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Card(
+    Surface(
+        onClick = { onStoryClick(story.id) },
+        shape = RoundedCornerShape(24.dp),
+        color = MaterialTheme.colorScheme.surface,
+        tonalElevation = 2.dp,
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 4.dp)
-            .clip(RoundedCornerShape(20.dp))
-            .clickable { onStoryClick(story.id) },
-        shape = RoundedCornerShape(20.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
-        )
+            .padding(vertical = 8.dp)
     ) {
         Row(
             modifier = Modifier
-                .padding(8.dp)
+                .padding(12.dp)
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(
                 modifier = Modifier
-                    .size(90.dp)
-                    .clip(RoundedCornerShape(16.dp))
+                    .size(100.dp)
+                    .clip(RoundedCornerShape(20.dp))
             ) {
+                val finalUrl = if (story.coverImage.contains("?")) "${story.coverImage}&t=${System.currentTimeMillis()}" else "${story.coverImage}?t=${System.currentTimeMillis()}"
                 AsyncImage(
-                    model = story.coverImage,
+                    model = finalUrl,
                     contentDescription = null,
                     modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
+                    contentScale = ContentScale.Crop,
+                    onError = { error ->
+                        android.util.Log.e("IMAGE_LOAD", "Failed to load list image: $finalUrl", error.result.throwable)
+                    }
                 )
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(
-                            Brush.verticalGradient(
-                                listOf(Color.Transparent, Color.Black.copy(alpha = 0.2f))
-                            )
-                        )
-                )
+                
                 if (story.isPremium) {
-                    Box(
+                    Surface(
+                        color = Color(0xFFFFD700),
+                        shape = CircleShape,
                         modifier = Modifier
                             .align(Alignment.TopStart)
-                            .padding(4.dp)
-                            .background(Color(0xFFFFD700), CircleShape)
-                            .padding(4.dp)
+                            .padding(6.dp)
+                            .size(24.dp)
                     ) {
-                        Icon(
-                            Icons.Default.Lock,
-                            contentDescription = "Premium",
-                            tint = Color(0xFF5D4037),
-                            modifier = Modifier.size(12.dp)
-                        )
+                        Box(contentAlignment = Alignment.Center) {
+                            Icon(
+                                Icons.Default.Lock,
+                                contentDescription = "Premium",
+                                tint = Color(0xFF5D4037),
+                                modifier = Modifier.size(14.dp)
+                            )
+                        }
                     }
                 }
             }
@@ -97,54 +94,74 @@ fun StoryCard(
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.ExtraBold,
                     color = MaterialTheme.colorScheme.onSurface,
-                    maxLines = 1,
+                    maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
                 
                 Spacer(modifier = Modifier.height(4.dp))
                 
-                Surface(
-                    color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.7f),
-                    shape = RoundedCornerShape(8.dp)
-                ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Surface(
+                        color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.5f),
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Text(
+                            text = story.category,
+                            style = MaterialTheme.typography.labelSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSecondaryContainer,
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = story.category,
+                        text = "•  👶 ${story.ageGroup}y",
                         style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer,
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontWeight = FontWeight.Medium
                     )
                 }
                 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(12.dp))
                 
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = "👶 ${story.ageGroup}y",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Spacer(modifier = Modifier.width(12.dp))
-                    Text(
-                        text = "⏱️ ${story.readingTime}",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.Bold
-                    )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    InfoTag(icon = "⏱️", text = story.readingTime)
+                    InfoTag(icon = "📖", text = "${story.pages.size} Pages")
                 }
             }
 
-            IconButton(
+            Surface(
                 onClick = { onFavoriteClick(story.id) },
-                colors = IconButtonDefaults.iconButtonColors(
-                    contentColor = if (isFavorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline
-                )
+                shape = CircleShape,
+                color = if (isFavorite) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                modifier = Modifier.size(40.dp)
             ) {
-                Icon(
-                    imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Outlined.FavoriteBorder,
-                    contentDescription = "Favorite",
-                    modifier = Modifier.size(28.dp)
-                )
+                Box(contentAlignment = Alignment.Center) {
+                    Icon(
+                        imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Outlined.FavoriteBorder,
+                        contentDescription = "Favorite",
+                        tint = if (isFavorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(22.dp)
+                    )
+                }
             }
         }
+    }
+}
+
+@Composable
+private fun InfoTag(icon: String, text: String) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Text(text = icon, fontSize = 12.sp)
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(
+            text = text,
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.primary,
+            fontWeight = FontWeight.Bold
+        )
     }
 }

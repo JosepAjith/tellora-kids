@@ -23,6 +23,8 @@ class LocalPreferencesDataSource @Inject constructor(
         val FONT_SIZE = floatPreferencesKey("font_size")
         val SELECTED_AGE_GROUP = stringPreferencesKey("selected_age_group")
         val IS_PREMIUM = booleanPreferencesKey("is_premium")
+        
+        fun storyProgressKey(storyId: String) = intPreferencesKey("story_progress_$storyId")
     }
 
     val favoriteStoryIds: Flow<Set<String>> = context.dataStore.data
@@ -95,6 +97,17 @@ class LocalPreferencesDataSource @Inject constructor(
     suspend fun setPremiumStatus(isPremium: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.IS_PREMIUM] = isPremium
+        }
+    }
+
+    fun getStoryProgress(storyId: String): Flow<Int> = context.dataStore.data
+        .map { preferences ->
+            preferences[PreferencesKeys.storyProgressKey(storyId)] ?: 1
+        }
+
+    suspend fun saveStoryProgress(storyId: String, page: Int) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.storyProgressKey(storyId)] = page
         }
     }
 }
