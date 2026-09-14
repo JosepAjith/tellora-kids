@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.*
@@ -216,8 +217,9 @@ fun CompactStoryGridItem(
                     .aspectRatio(1f)
                     .clip(RoundedCornerShape(20.dp))
             ) {
+                val imageUrl = story.coverImageUrl.ifBlank { story.coverImage }
                 AsyncImage(
-                    model = story.coverImage,
+                    model = imageUrl,
                     contentDescription = null,
                     modifier = Modifier.fillMaxSize(),
                     contentScale = androidx.compose.ui.layout.ContentScale.Crop
@@ -238,6 +240,26 @@ fun CompactStoryGridItem(
                         tint = if (isFavorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.size(18.dp)
                     )
+                }
+
+                if (story.isPremium) {
+                    Surface(
+                        color = androidx.compose.ui.graphics.Color(0xFFFFD700),
+                        shape = CircleShape,
+                        modifier = Modifier
+                            .align(Alignment.TopStart)
+                            .padding(4.dp)
+                            .size(24.dp)
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            Icon(
+                                Icons.Default.Lock,
+                                contentDescription = "Premium",
+                                tint = androidx.compose.ui.graphics.Color(0xFF5D4037),
+                                modifier = Modifier.size(14.dp)
+                            )
+                        }
+                    }
                 }
             }
             

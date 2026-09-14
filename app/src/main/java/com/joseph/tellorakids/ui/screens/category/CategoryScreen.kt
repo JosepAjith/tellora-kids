@@ -28,6 +28,7 @@ import com.joseph.tellorakids.viewmodel.CategoryViewModel
 fun CategoryScreen(
     onBackClick: () -> Unit,
     onStoryClick: (Story) -> Unit,
+    onPremiumClick: () -> Unit,
     isExpanded: Boolean = false,
     viewModel: CategoryViewModel = hiltViewModel()
 ) {
@@ -89,7 +90,13 @@ fun CategoryScreen(
                         StoryCard(
                             story = story,
                             isFavorite = uiState.favoriteIds.contains(story.id),
-                            onStoryClick = { onStoryClick(story) },
+                            onStoryClick = { 
+                                if (story.isPremium && !uiState.isPremium) {
+                                    onPremiumClick()
+                                } else {
+                                    onStoryClick(story)
+                                }
+                            },
                             onFavoriteClick = { viewModel.toggleFavorite(it) }
                         )
                     }
@@ -106,7 +113,13 @@ fun CategoryScreen(
                         StoryCard(
                             story = story,
                             isFavorite = uiState.favoriteIds.contains(story.id),
-                            onStoryClick = { onStoryClick(story) },
+                            onStoryClick = { 
+                                if (story.isPremium && !uiState.isPremium) {
+                                    onPremiumClick()
+                                } else {
+                                    onStoryClick(story)
+                                }
+                            },
                             onFavoriteClick = { viewModel.toggleFavorite(it) }
                         )
                     }

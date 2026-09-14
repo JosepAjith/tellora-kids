@@ -52,7 +52,8 @@ fun StoryCard(
                     .size(100.dp)
                     .clip(RoundedCornerShape(20.dp))
             ) {
-                val finalUrl = if (story.coverImage.contains("?")) "${story.coverImage}&t=${System.currentTimeMillis()}" else "${story.coverImage}?t=${System.currentTimeMillis()}"
+                val imageUrl = story.coverImageUrl.ifBlank { story.coverImage }
+                val finalUrl = if (imageUrl.contains("?")) "${imageUrl}&t=${System.currentTimeMillis()}" else "${imageUrl}?t=${System.currentTimeMillis()}"
                 AsyncImage(
                     model = finalUrl,
                     contentDescription = null,

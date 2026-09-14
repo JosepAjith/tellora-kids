@@ -24,8 +24,23 @@ billingKtx = "7.0.0"
 coreSplashScreen = "1.0.1"
 firebaseBom = "33.1.0"
 googleServices = "4.4.2"
+supabase = "2.6.1"
+room = "2.6.1"
+ktor = "2.3.12"
 
 [libraries]
+# Supabase
+supabase-postgrest = { group = "io.github.jan-tennert.supabase", name = "postgrest-kt", version.ref = "supabase" }
+supabase-gotrue = { group = "io.github.jan-tennert.supabase", name = "gotrue-kt", version.ref = "supabase" }
+
+# Ktor
+ktor-client-android = { group = "io.ktor", name = "ktor-client-android", version.ref = "ktor" }
+
+# Room
+androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
@@ -68,6 +83,12 @@ lottie-compose = { group = "com.airbnb.android", name = "lottie-compose", versio
 
 # Ads
 play-services-ads = { group = "com.google.android.gms", name = "play-services-ads", version.ref = "playServicesAds" }
+
+# Google Play Core
+play-app-update = { group = "com.google.android.play", name = "app-update", version = "2.1.0" }
+play-app-update-ktx = { group = "com.google.android.play", name = "app-update-ktx", version = "2.1.0" }
+play-review = { group = "com.google.android.play", name = "review", version = "2.0.1" }
+play-review-ktx = { group = "com.google.android.play", name = "review-ktx", version = "2.0.1" }
 
 # Billing
 billing-ktx = { group = "com.android.billingclient", name = "billing-ktx", version.ref = "billingKtx" }

@@ -15,14 +15,17 @@ android {
         applicationId = "com.joseph.tellorakids"
         minSdk = 24
         targetSdk = 35
-        versionCode = 6
-
-        versionName = "1.0"
+        versionCode = 8
+        versionName = "1.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        buildConfigField("String", "SUPABASE_URL", "\"https://aroereluxcehtjlnhcow.supabase.co\"")
+        buildConfigField("String", "SUPABASE_PUBLISHABLE_KEY", "\"sb_publishable_JWn2xs3CZhgXijHCzWZYHw_ImHvln0v\"")
+        buildConfigField("String", "R2_PUBLIC_BASE_URL", "\"https://pub-252f0812a65c40238f6703770621fedd.r2.dev\"")
     }
 
     signingConfigs {
@@ -54,6 +57,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
@@ -79,6 +83,17 @@ dependencies {
     implementation(libs.google.material)
     implementation(libs.androidx.navigation.compose)
 
+    // Supabase
+    implementation(libs.supabase.postgrest)
+    implementation(libs.supabase.gotrue)
+    implementation(libs.ktor.client.android)
+    implementation(libs.kotlinx.serialization.json)
+
+    // Room
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    kapt(libs.androidx.room.compiler)
+
     // Hilt
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
@@ -103,6 +118,12 @@ dependencies {
     // Ads
     implementation(libs.play.services.ads)
 
+    // Google Play Core
+    implementation(libs.play.app.update)
+    implementation(libs.play.app.update.ktx)
+    implementation(libs.play.review)
+    implementation(libs.play.review.ktx)
+
     // Billing
     implementation(libs.billing.ktx)
 
@@ -111,8 +132,6 @@ dependencies {
 
     // Firebase
     implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.firestore)
-    implementation(libs.firebase.storage)
     implementation(libs.firebase.analytics)
 
     testImplementation(libs.junit)

@@ -10,6 +10,7 @@ import com.joseph.tellorakids.domain.usecase.GetStoryDetailsUseCase
 import com.joseph.tellorakids.domain.usecase.SaveRecentStoryUseCase
 import com.joseph.tellorakids.domain.usecase.ToggleFavoriteUseCase
 import com.joseph.tellorakids.data.datasource.LocalPreferencesDataSource
+import com.joseph.tellorakids.common.managers.ReviewManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -33,6 +34,8 @@ class StoryViewModel @Inject constructor(
     private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
     private val saveRecentStoryUseCase: SaveRecentStoryUseCase,
     private val preferencesDataSource: LocalPreferencesDataSource,
+    private val reviewManager: ReviewManager,
+    private val repository: com.joseph.tellorakids.domain.repository.StoryRepository,
     application: Application,
     savedStateHandle: SavedStateHandle
 ) : AndroidViewModel(application) {
@@ -90,6 +93,12 @@ class StoryViewModel @Inject constructor(
                 val totalPages = state.story?.pages?.size ?: 1
                 state.copy(readingProgress = page.toFloat() / totalPages)
             }
+        }
+    }
+
+    fun markStoryAsRead() {
+        viewModelScope.launch {
+            reviewManager.recordStoryRead()
         }
     }
 

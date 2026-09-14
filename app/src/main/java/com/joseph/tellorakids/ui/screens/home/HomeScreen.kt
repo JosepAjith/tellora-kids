@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
+import com.joseph.tellorakids.common.managers.ReviewManager
 import com.joseph.tellorakids.common.utils.AdsManager
 import com.joseph.tellorakids.domain.model.AgeGroup
 import com.joseph.tellorakids.domain.model.Story
@@ -43,6 +44,9 @@ import com.joseph.tellorakids.ui.components.StoryCard
 import com.joseph.tellorakids.ui.theme.*
 import com.joseph.tellorakids.viewmodel.HomeViewModel
 import java.util.Calendar
+import androidx.compose.ui.platform.LocalContext
+import android.app.Activity
+import com.joseph.tellorakids.ui.navigation.findActivity
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -57,6 +61,18 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
+    val activity = context.findActivity()
+
+    // 1. Preload interstitial ad & Check for Review
+    LaunchedEffect(Unit) {
+        viewModel.adsManager.loadInterstitial(context)
+        activity?.let { viewModel.reviewManager.requestReview(it) }
+    }
+    
+    // 3. Handle Ad showing when returning to Home (simplified logic)
+    // In a real app, you might trigger this on navigation events
+    // For now, we'll preload on Home start.
 
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0)
@@ -208,7 +224,7 @@ fun HomePhoneLayout(
                 )
             }
             
-            items(uiState.featuredStories.take(5)) { story ->
+            items(uiState.newStories.take(10)) { story ->
                 StoryCard(
                     story = story,
                     isFavorite = uiState.favoriteIds.contains(story.id),
@@ -324,7 +340,7 @@ fun HomeTabletLayout(
                 contentPadding = PaddingValues(bottom = 32.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(uiState.featuredStories) { story ->
+                items(uiState.newStories) { story ->
                     StoryCard(
                         story = story,
                         isFavorite = uiState.favoriteIds.contains(story.id),
@@ -491,8 +507,9 @@ fun ContinueReadingCard(
                     .size(80.dp)
                     .clip(RoundedCornerShape(16.dp))
             ) {
+                val imageUrl = story.coverImageUrl.ifBlank { story.coverImage }
                 AsyncImage(
-                    model = story.coverImage,
+                    model = imageUrl,
                     contentDescription = null,
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop
@@ -796,8 +813,9 @@ fun FeaturedPager(
                 shadowElevation = 8.dp
             ) {
                 Box(modifier = Modifier.fillMaxSize()) {
+                    val imageUrl = story.coverImageUrl.ifBlank { story.coverImage }
                     AsyncImage(
-                        model = story.coverImage,
+                        model = imageUrl,
                         contentDescription = null,
                         modifier = Modifier.fillMaxSize(),
                         contentScale = ContentScale.Crop,

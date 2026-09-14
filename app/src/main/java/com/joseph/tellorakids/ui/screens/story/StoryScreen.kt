@@ -38,6 +38,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.lerp
+import androidx.activity.compose.BackHandler
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.airbnb.lottie.compose.*
@@ -68,6 +69,11 @@ fun StoryScreen(
     val isDark = settingsState.isDarkMode
     val bodyFontSize = settingsState.fontSize.sp
 
+    // Handle System Back Button
+    BackHandler {
+        onBackClick()
+    }
+
     // Theme Colors based on prompt
     val bgColor = if (isDark) Color(0xFF0F172A) else Color(0xFFFFFDF7)
     val accentColor = Color(0xFFFF6F00) // Orange accent
@@ -93,6 +99,8 @@ fun StoryScreen(
         } else if (pagerState.currentPage == uiState.story?.pages?.size) {
             // Moral page is considered completed
             viewModel.updateCurrentPage(uiState.story?.pages?.size ?: 1)
+            // Record story read for In-App Review criteria
+            viewModel.markStoryAsRead()
         }
     }
 
@@ -230,7 +238,7 @@ fun StoryContent(
                 MoralPageItem(
                     moral = story.moral,
                     title = story.title,
-                    coverImage = story.coverImage,
+                    coverImage = story.coverImageUrl.ifBlank { story.coverImage },
                     isDark = isDark,
                     accentColor = accentColor,
                     pageOffset = ((pagerState.currentPage - pageIndex) + pagerState.currentPageOffsetFraction).coerceIn(-1f, 1f)
@@ -264,7 +272,8 @@ fun StoryPageItem(
                 }
                 .clip(RoundedCornerShape(bottomStart = 40.dp, bottomEnd = 40.dp))
         ) {
-            StoryImage(imageUrl = page.image, isDark = isDark)
+            val pageImageUrl = page.imageUrl.ifBlank { page.image }
+            StoryImage(imageUrl = pageImageUrl, isDark = isDark)
         }
 
         // Floating Story Card

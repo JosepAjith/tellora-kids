@@ -1,6 +1,5 @@
 package com.joseph.tellorakids.domain.model
 
-import com.google.firebase.firestore.PropertyName
 import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.Serializable
 
@@ -8,28 +7,34 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Story(
     val id: String = "",
+    val storyId: String = "",
     val version: Int = 1,
     val title: String = "",
     val category: String = "",
     val coverImage: String = "",
+    val coverImageUrl: String = "",
     val ageGroup: String = "",
     val readingTime: String = "",
     val language: String = "en",
+    val description: String = "",
+    val music: String = "",
+    val status: String = "",
     val pages: List<StoryPage> = emptyList(),
     val moral: String = "",
+    val createdAt: String = "",
+    val updatedAt: String = "",
     
-    @get:PropertyName("featured") @set:PropertyName("featured")
-    var isFeatured: Boolean = false,
-    
-    @get:PropertyName("premium") @set:PropertyName("premium")
-    var isPremium: Boolean = false
+    val isFeatured: Boolean = false,
+    val isPremium: Boolean = false
 )
 
 @OptIn(InternalSerializationApi::class)
 @Serializable
 data class StoryPage(
+    val id: String = "",
     val page: Int = 0,
     val image: String = "",
+    val imageUrl: String = "",
     val text: String = ""
 )
 

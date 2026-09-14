@@ -7,6 +7,8 @@ import com.joseph.tellorakids.domain.model.Story
 import com.joseph.tellorakids.domain.repository.StoryRepository
 import com.joseph.tellorakids.domain.usecase.GetHomeStoriesUseCase
 import com.joseph.tellorakids.domain.usecase.ToggleFavoriteUseCase
+import com.joseph.tellorakids.common.utils.AdsManager
+import com.joseph.tellorakids.common.managers.ReviewManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -15,6 +17,7 @@ import javax.inject.Inject
 data class HomeUiState(
     val isLoading: Boolean = true,
     val featuredStories: List<Story> = emptyList(),
+    val newStories: List<Story> = emptyList(),
     val recentStory: Story? = null,
     val recentStoryProgress: Int = 1,
     val categories: List<Story> = emptyList(),
@@ -29,7 +32,9 @@ data class HomeUiState(
 class HomeViewModel @Inject constructor(
     private val getHomeStoriesUseCase: GetHomeStoriesUseCase,
     private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
-    private val repository: StoryRepository
+    private val repository: StoryRepository,
+    val adsManager: AdsManager,
+    val reviewManager: ReviewManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())
@@ -78,6 +83,7 @@ class HomeViewModel @Inject constructor(
                     it.copy(
                         isLoading = false,
                         featuredStories = homeStories.featured,
+                        newStories = homeStories.allStories,
                         recentStory = homeStories.recent,
                         recentStoryProgress = progress,
                         categories = homeStories.categories,

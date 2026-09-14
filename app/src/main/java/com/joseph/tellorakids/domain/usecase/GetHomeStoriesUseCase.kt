@@ -9,7 +9,8 @@ import javax.inject.Inject
 data class HomeStories(
     val featured: List<Story>,
     val recent: Story?,
-    val categories: List<Story>
+    val categories: List<Story>,
+    val allStories: List<Story>
 )
 
 class GetHomeStoriesUseCase @Inject constructor(
@@ -25,7 +26,8 @@ class GetHomeStoriesUseCase @Inject constructor(
             HomeStories(
                 featured = featured,
                 recent = recentStory,
-                categories = allStories.distinctBy { it.category }
+                categories = allStories.distinctBy { it.category },
+                allStories = allStories
             )
         }
     }

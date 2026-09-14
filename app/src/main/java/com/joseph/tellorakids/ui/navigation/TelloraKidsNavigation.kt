@@ -45,6 +45,17 @@ import com.joseph.tellorakids.ui.screens.premium.PremiumScreen
 import com.joseph.tellorakids.ui.screens.search.SearchScreen
 import com.joseph.tellorakids.ui.screens.settings.SettingsScreen
 import com.joseph.tellorakids.ui.screens.story.StoryScreen
+import com.joseph.tellorakids.common.utils.AdsManager
+import androidx.compose.ui.platform.LocalContext
+import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
+
+fun Context.findActivity(): Activity? = when (this) {
+    is Activity -> this
+    is ContextWrapper -> baseContext.findActivity()
+    else -> null
+}
 
 @Composable
 fun TelloraKidsNavigation(
@@ -221,6 +232,10 @@ fun NavHostContainer(
     isExpanded: Boolean,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
+    val activity = context.findActivity()
+    val adsManager: AdsManager = hiltViewModel<com.joseph.tellorakids.viewmodel.AdsWrapperViewModel>().adsManager
+
     NavHost(
         navController = navController,
         startDestination = Screen.Home.route,
@@ -267,6 +282,7 @@ fun NavHostContainer(
                         navController.navigate(Screen.StoryDetails.createRoute(story.id))
                     }
                 },
+                onPremiumClick = { navController.navigate(Screen.Premium.route) },
                 viewModel = viewModel
             )
         }
@@ -276,7 +292,16 @@ fun NavHostContainer(
             arguments = listOf(navArgument("storyId") { type = NavType.StringType })
         ) {
             StoryScreen(
-                onBackClick = { navController.popBackStack() }
+                onBackClick = { 
+                    android.util.Log.d("Navigation", "Story back clicked. Activity: $activity")
+                    if (activity != null) {
+                        adsManager.showInterstitial(activity) {
+                            navController.popBackStack()
+                        }
+                    } else {
+                        navController.popBackStack()
+                    }
+                }
             )
         }
 
